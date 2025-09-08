@@ -1,0 +1,46 @@
+---
+title: "Assignment 1: Introduction"
+author: Jordan Heinlein
+output: pdf_document
+---
+
+## OVERVIEW
+
+This exercise accompanies the introductory material in Environmental Data Analytics. 
+
+## Directions
+1.  Rename this file `<FirstLast>_A01_Introduction.Rmd` (replacing `<FirstLast>` with your first and last name).
+2.  Change "Student Name" on line 3 (above) with your name.
+3.  Work through the steps, **creating code and output** that fulfill each instruction.
+4.  Be sure to **answer the questions** in this assignment document.
+5.  When you have completed the assignment, **Knit** the text and code into a single PDF file.
+6.  After Knitting, submit the completed exercise (PDF file) to the appropriate assignment section on Canvas.
+
+
+## 1) Discussion Questions
+Enter answers to the questions just below the >Answer: prompt.
+
+1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
+
+> Answer: 
+I don't have much experience with data analytics, and had not used Git or GitHub prior to the first session for this class. I have very limited experience with R. Last summer, I worked my way through a portion of the "R for Data Science" online textbook by Wichkham et al., as this was recommeneded by a Nicholas School alumnus. I wouldn't say I'm overly confident or comfortable with R or RStudio.
+
+2. Are there any components of the course about which you feel confident?
+
+> Answer: 
+Not in particular. However, I'm motived to learn R as a great tool for data analysis, so hopefully that will be helpful and allow me to overcome the challenges and frustrations of R, ultimately leading to greater confidence. 
+
+3. Are there any components of the course about which you feel apprehensive?
+
+> Answer: 
+The possibility that R and coding don't click for me, or becoming frustrated by the amount of error messages R produces. 
+
+## 2) GitHub
+
+Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository and that you have updated your course README file, committed those changes, and pushed them to your GitHub account. 
+
+> Answer: 
+https://github.com/jordan-heinlein7/EDE_Fall2025.git
+
+## 3) Knitting
+When you have completed this document, click the `knit` button.This should produce a PDF copy of your markdown document. Submit this PDF to Canvas 
