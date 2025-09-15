@@ -32,17 +32,14 @@ This exercise accompanies the lessons/labs in Environmental Data Analytics on co
 
 ```{r basics 1}
 #1. 
-
 Sequence55 <- seq(1,55,5) #Created a sequence from 1-55 by 5 and assigned the object name "Sequence55".
-
 #2. 
 mean(Sequence55) #Using mean() to calculate the mean of Sequence55 which is 26.
-
 median(Sequence55) #Using median() to calculate the median of Sequence55 which is 26.
-
 #3. 
-
-mean(Sequence55) > median(Sequence55) #Providing R the conditional statement that the mean of Sequence55 is greater than the median. Running this code returns 'FALSE' because the mean and median values for this sequence are equal.
+mean(Sequence55) > median(Sequence55) #Providing R the conditional statement 
+#that the mean of Sequence55 is greater than the median. Running this code 
+#returns 'FALSE' because the mean and median values for this sequence are equal.
 ```
 
 ## Basics, Part 2
@@ -56,7 +53,8 @@ mean(Sequence55) > median(Sequence55) #Providing R the conditional statement tha
 8.  Label the columns of your data frame with informative titles.
 
 ```{r basics 2}
-student_names <- c("Jordan","Stef","Colada","Graham") #This is a character vector. Components must be in "".
+student_names <- c("Jordan","Stef","Colada","Graham") #This is a character vector. 
+#Components must be in "".
 class(student_names)
 
 student_scores <- c(90, 95, 62,100) #This is a numeric vector.
@@ -65,11 +63,16 @@ class(student_scores)
 student_scholarships <- c(FALSE,FALSE,TRUE,FALSE) #This is a logical vector. 
 class(student_scholarships)
 
-student_information <- data.frame(student_names,student_scores,student_scholarships) #Created a data frame called "student information" by combining the student names, scores, and scholarship vectors.
+student_information <- data.frame(student_names,student_scores,student_scholarships) 
+#Created a data frame called "student information" by combining the student names, scores, 
+#and scholarship vectors.
 
-names(student_information) <- c("Student Name", "Test Score", "Scholarship Status") #Updated the column names for the data frame by creating a character vector with desired names.
+names(student_information) <- c("Student Name", "Test Score", "Scholarship Status") 
+#Updated the column names for the data frame by creating a character vector with 
+#desired names.
 
-View(student_information) #View the data frame to confirm code creating desired data frame. 
+#View(student_information) View the data frame to confirm code 
+#creating desired data frame. 
 ```
 
 9.  QUESTION: How is this data frame different from a matrix?
