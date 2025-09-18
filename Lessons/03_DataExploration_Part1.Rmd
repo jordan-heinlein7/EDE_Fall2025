@@ -61,8 +61,8 @@ You need to load packages each time you start (or restart) an R coding session; 
 ```{r Setup: Loading Packages}
 #Install packages - uncomment these only when you need to install packages
 #install.packages('dplyr')
-install.packages('ggplot')
-install.packages('here')
+#install.packages('ggplot2')
+#install.packages('here')
 
 #Load the tidyverse, ggplot2, and here package
 library(dplyr)
@@ -96,7 +96,7 @@ Instead, we will use the `here` package, which was developed to overcome this ve
 Thus, you'll want to include the following command, also early on in your RMarkdown document to reveal 
 
 ```{r Setup: Configure working directory}
-#Use getwd() to reveal what R sees as the working directory
+#Use getwd() to reveal what R sees as the working directory. This is where R is looking for files. 
 getwd()
 
 #Use here to show where the R Project file is
@@ -107,7 +107,7 @@ here()
 
 ### Importing datasets
 
-Datasets can be imported into R. Good data practices dictate that raw data (from yourself or others) should not be changed and re-saved within the spreadsheet, but rather the data should be changed with reproducible techniques and saved as a new file. Note:  data should be saved in nonproprietary formats, namely .csv or .txt files rather than .xls or .xlsx files. 
+Datasets can be imported into R. Good data practices dictate that raw data (from yourself or others) should not be changed and re-saved within the spreadsheet, but rather the data should be changed with reproducible techniques and saved as a new file. Note:  data should be saved in nonproprietary formats, namely .csv (comma seperated values) or .txt files rather than .xls or .xlsx files. 
 
 To read in a data file, you may specify a file path with an *absolute* or a *relative* file path. As above with your working directory, it is a better practice to use a relative directory. To navigate a relative file path, use `./` followed by the tab key to navigate  forward in the folder structure, and use `../` followed by the tab key to navigate back out of the folder structure. For example, this lesson is located in the "Lessons" folder, and we need to navigate into the "Data" folder. After clicking the correct folder, use `/` and press tab again to continue the process. 
 
@@ -117,24 +117,25 @@ Commons functions to import datasets and store as data frames are *read.table()*
 
 -   *file = * : use this input to point to your data file. If it's on the same folder as your .Rmd then you only need to write the file name. But if it's on another folder you need to point to the path were file is located;
 -   *header =* : if your file has a header you should set this to TRUE, o.w. FALSE;
--   *skip =* : if your file has rows explaining the data or any other rows on the top that need to be skipped you should just set skip to be equal to the number of row that should be skipped before reading the data. Mote that if header=TRUE, you should not skip the row with the header. The defaul is *skip=0*;
+-   *skip =* : if your file has rows explaining the data or any other rows on the top that need to be skipped you should just set skip to be equal to the number of row that should be skipped before reading the data. Note that if header=TRUE, you should not skip the row with the header. The default is *skip=0*;
 -   *dec =* : define *dec="."* or *dec=","* depending on how it's defined on your set. The default is ".".
 
 ```{r Importing data}
 # Absolute file path (not recommended)
 read.csv(
-    file="/home/guest/EDE_Fall2025/Data/Raw/USGS_Site02085000_Flow_Raw.csv",
+   file="/home/guest/EDE_Fall2025/Data/Raw/USGS_Site02085000_Flow_Raw.csv",
     stringsAsFactors = TRUE)
 
-# Relative file path (friendly for users regardless of machine)
-USGS.flow.data <- read.csv(
+# Relative file path (friendly for users regardless of machine). Saves content as an object (USGS.flow,data) data as a dataframe in environment
+USGS.flow.data <- read.csv(                                   
   file = here("./Data/Raw/USGS_Site02085000_Flow_Raw.csv"),
   stringsAsFactors = TRUE)   
-
+#Important to always include the stringsAsFactors = TRUE when reading a data set.
 # What happens if we don't assign a name to our imported dataset?
 read.csv(here("./Data/Raw/USGS_Site02085000_Flow_Raw.csv"),stringsAsFactors = TRUE)
 
-read.csv(home('Data/Raw/USGS_Site02085000_Flow_Raw.csv'))
+#If we don't assign a name to the imported data set, the data populates in the console only, and does not create a dataframe in the coding environment.
+
 ```
 
 >Tip: Use autocomplete in the console instead of typing in the path...
@@ -154,7 +155,9 @@ library(tidyverse)
 getwd()
 here()
 # Load the USGS flow data into a data frame
-read.csv('Data/Raw/USGS_Site02085000_Flow_Raw.csv')
+USGS.flow.data <- read.csv(                                   
+  file = here("./Data/Raw/USGS_Site02085000_Flow_Raw.csv"),
+  stringsAsFactors = TRUE)  
 ```
 
 ---
@@ -166,7 +169,7 @@ Prior to analyzing your dataset, take a moment to understand your data. Where di
 
 Take a moment to read through the README file associated with the USGS dataset on discharge at the Eno River. Where can you find this file? How does the placement and information found in this file relate to the best practices for reproducible data analysis?
 
-> ANSWER: 
+> ANSWER: The README file associated with the USGS dataset is saved in the Data>Metadata folder. Metadata is where you can find out more information on the dataset, parameters, how it was produced, etc. Having a seperate metadata file that explains the set allows for reproducivle analysis because it ensures that everyone working with the data set understands it (reliability, what the observations and attributes are, etc.)
 
 ### Examine properties of your dataset
 Next, have a look at your dataset. Browse your data in RStudio's viewer. Have a look at the structure of your data. Consider renaming columns. 
@@ -178,7 +181,7 @@ Next, have a look at your dataset. Browse your data in RStudio's viewer. Have a 
 class(USGS.flow.data)
 colnames(USGS.flow.data)
 names(USGS.flow.data)
-# Rename columns
+# Rename columns by creating a vector with desired column names. Vector length must be equal to the number of columns in the data table.
 colnames(USGS.flow.data) <- c("agency_cd", "site_no", "datetime", 
                               "discharge.max", "discharge.max.approval", 
                               "discharge.min", "discharge.min.approval", 
@@ -186,32 +189,32 @@ colnames(USGS.flow.data) <- c("agency_cd", "site_no", "datetime",
                               "gage.height.max", "gage.height.max.approval", 
                               "gage.height.min", "gage.height.min.approval", 
                               "gage.height.mean", "gage.height.mean.approval")
-str(USGS.flow.data) #shows structure
+str(USGS.flow.data) #shows structure including the number of observations (rows) and variables (columns), and the data type each column was imported as Ex. date information should be date/time not factor or numerical, etc.
 dim(USGS.flow.data) #gives dimensions of data (observations, attributes)
 length(USGS.flow.data) # of columns or attributes
 
 head(USGS.flow.data) #shows top portion of dataset
 head(USGS.flow.data, 10)
 tail(USGS.flow.data, 5)
-USGS.flow.data[30000:30005, c(3, 8, 14)] #specific sub sample of dataframe
+USGS.flow.data[30000:30005, c(3, 8, 14)] #specific sub sample of dataframe, displaying rows 30,000-30005, and rows 3,8,14.
 
 class(USGS.flow.data$datetime)
 class(USGS.flow.data$discharge.mean)
 class(USGS.flow.data$gage.height.mean)
 
-summary(USGS.flow.data)  #could point to column only with $
+summary(USGS.flow.data)  #summary command gives summary stats (min,max, median, mean, quartiles) for all numeric columns. 
 
 ```
 
 What happened to blank cells in the spreadsheet when they were imported into R?
-> Answer: 
+> Answer: R will assign them NA if numeric data column, or leave blank for other data types. 
 
 ### Identify and address issues: Missing Data
 
 Notice in our dataset that our discharge and gage height observations have many NAs, meaning no measurement was recorded for a specific day. In some cases, it might be in our best interest to remove NAs from a dataset. Removing NAs or not will depend on your research question.
 
 ```{r Finding NAs}
-summary(USGS.flow.data$discharge.mean)
+summary(USGS.flow.data$discharge.mean) #will show the number of NAs 
 summary(USGS.flow.data$gage.height.mean)
 ```
 Question: What types of research questions might make it favorable to remove NAs from a dataset, and what types of research questions might make it favorable to retain NAs in the dataset?
@@ -219,7 +222,7 @@ Question: What types of research questions might make it favorable to remove NAs
 > Answer: 
 
 ```{r Removing NAs}
-USGS.flow.data.complete <- na.omit(USGS.flow.data)
+USGS.flow.data.complete <- na.omit(USGS.flow.data) #na.omit removes any rows that have missing data. 
 dim(USGS.flow.data)
 dim(USGS.flow.data.complete)
 #can't calculate the mean with mean command if there are missing values
@@ -244,7 +247,7 @@ With the `read.csv()`, R guesses at a columns data type by looking at the values
 The code chunk below shows how we coerce R to set `site_no` to be a *factor*, not an integer. 
 
 ```{r}
-USGS.flow.data$site_no <- as.factor(USGS.flow.data$site_no)
+USGS.flow.data$site_no <- as.factor(USGS.flow.data$site_no) #use as.factor
 str(USGS.flow.data)
 ```
 
@@ -254,7 +257,7 @@ Alternatively, we can tell R to import it as a factor when we read the data in
 USGS.flow.data2  <- read.csv(
   file = here("./Data/Raw/USGS_Site02085000_Flow_Raw.csv"),
   stringsAsFactors = TRUE,
-  colClasses= c('site_no'='factor')
+  colClasses= c('site_no'='factor') #This is telling R to import the site_no data as factors not integers.
   ) 
 ```
 
@@ -284,12 +287,12 @@ help(as.Date)
 # An example is provided to get you started.
 # (code must be uncommented)
 today <- Sys.Date()
-format(today, format = "%A")
+format(today, format = "%b")
 #format(today, format = "")
 #format(today, format = "")
 #format(today, format = "")
 
-USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%m/%d/%y") #dates formatted with / in raw table
+USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%m/%d/%y") #as.Date converts the date column to date/time data type. dates formatted with / in raw table. Elements of date in raw dataframe may be seperated by - or spaces. 
 ```
 
 Note that for every date prior to 1969, R has assigned the date in the 2000s rather than the 1900s. This can be fixed with an `ifelse` statement inside a function. Run through the code below and write what is happening in the comment above each line.
@@ -324,7 +327,7 @@ write.csv(
   USGS.flow.data, 
   file = here("./Data/Processed/USGS_Site02085000_Flow_Processed.csv"), 
   row.names=FALSE)
-#now that data has been manipulated, save in Processed folder
+#now that data has been manipulated, save in Processed folder. When you save data, the dates are stored as a string, so they will need to be corrected again. 
 ```
 
 ---
