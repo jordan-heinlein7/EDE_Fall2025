@@ -19,7 +19,7 @@ Today we will work with a dataset from the [North Temperate Lakes Long-Term Ecol
 
 Opening discussion: why might we be interested in long-term observations of temperature, oxygen, and light in lakes?
 
-> Add notes here: 
+> Add notes here: plant productivity, nutrient cycling in lake systems. 
 
 ```{r setup workspace, message = FALSE}
 getwd()
@@ -27,7 +27,13 @@ getwd()
 library(tidyverse)
 #install.packages(lubridate)
 library(lubridate)
+library(here)
 NTL.phys.data <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
+#or
+NTL.phys.data <- read.csv(
+  file= here("Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv"),
+  stringsAsFactors = TRUE
+)
 
 colnames(NTL.phys.data)
 head(NTL.phys.data)
@@ -36,7 +42,9 @@ str(NTL.phys.data)
 dim(NTL.phys.data)
 
 class(NTL.phys.data$sampledate)
-# Format sampledate as date
+# Format the sampledate column in NTL.phys.data as date using lubridate and mdy format.
+NTL.phys.data$sampledate <- mdy(NTL.phys.data$sampledate)
+#or using as.Date
 NTL.phys.data$sampledate <- as.Date(NTL.phys.data$sampledate, format = "%m/%d/%y")
 ```
 
@@ -63,14 +71,14 @@ vignette("dplyr")
 Filtering allows us to choose certain rows (observations) in our dataset.
 
 Here are the relevant commands used in the `filter` function. Add some notes to designate what these commands mean. 
-`==`
-`!=`
-`<`
-`<=`
-`>`
-`>=`
-`&`
-`|`
+`==`equals 
+`!='values different, or to exclude a catergorical variable
+`<`less than
+`<=`less than or equal to
+`>`greater than
+`>=`greater than or equal to
+`&`use for multiple conditions, both x and y must be true
+`|`use for multiple conditions, either x or y. Can also just use a ','comma
 
 ```{r filtering data}
 class(NTL.phys.data$lakeid)
@@ -93,11 +101,14 @@ dim(NTL.phys.data.surface3)
 
 # Choose multiple conditions to filter
 summary(NTL.phys.data$lakename)
+#use filter function and '|' to select data for only Paul Lake and Peter Lake:
 NTL.phys.data.PeterPaul1 <- filter(NTL.phys.data, lakename == "Paul Lake" | lakename == "Peter Lake")
+#use filter function and != to filter out data based on the following lake names:
 NTL.phys.data.PeterPaul2 <- filter(NTL.phys.data, lakename != "Central Long Lake" & 
                                      lakename != "Crampton Lake" & lakename != "East Long Lake" &
                                      lakename != "Hummingbird Lake" & lakename != "Tuesday Lake" &
                                      lakename != "Ward Lake" & lakename != "West Long Lake")
+#Alternative to filter for Paul and Peter lake using neater code. Operator '%in%' and vector of names.
 NTL.phys.data.PeterPaul3 <- filter(NTL.phys.data, lakename %in% c("Paul Lake", "Peter Lake"))
 
 # Choose a range of conditions of a numeric or integer variable
@@ -110,11 +121,14 @@ NTL.phys.data.JunethruOctober4 <- filter(NTL.phys.data, daynum %in% c(152:304))
 # Exercise: 
 # filter NTL.phys.data for the year 1999
 # what code do you need to use, based on the class of the variable?
-class(NTL.phys.data$year4)
-
+class(NTL.phys.data$year4) #year4 is an integer
+NTL.phys.data.1999 <- filter(NTL.phys.data, year4==1999)
 # Exercise: 
 # filter NTL.phys.data for Tuesday Lake from 1990 through 1999.
-
+NTL.phys.data.TuesdayLake <- filter(NTL.phys.data,
+                                    lakename== "Tuesday Lake" & 
+                                    year4 %in% c(1990:1999)
+                                    )
 
 ```
 Question: Why don't we filter using row numbers?
@@ -141,13 +155,15 @@ Selecting allows us to choose certain columns (variables) in our dataset.
 
 ```{r selecting columns}
 NTL.phys.data.temps <- select(NTL.phys.data, lakename, sampledate:temperature_C)
-
+# ':' used to select adjacent columns
 ```
 ### Mutate
 
 Mutating allows us to add new columns that are functions of existing columns. Operations include addition, subtraction, multiplication, division, log, and other functions.
 
 ```{r mutating data}
+#for numeric data, can use mutate to create new data columns by manipulating data. Ex converting temp in C to F.
+
 NTL.phys.data.temps <- mutate(NTL.phys.data.temps, temperature_F = (temperature_C*9/5) + 32)
 
 ```
@@ -157,15 +173,17 @@ NTL.phys.data.temps <- mutate(NTL.phys.data.temps, temperature_F = (temperature_
 A package that makes coercing date much easier is `lubridate`. A guide to the package can be found at https://lubridate.tidyverse.org/. The cheat sheet within that web page is excellent too. This package can do many things (hint: look into this package if you are having unique date-type issues), but today we will be using two of its functions for our NTL dataset. 
 
 ```{r using lubridate}
-# add a month column to the dataset
+# add a month column to the dataset using mutate() and month() from lubridate.
 NTL.phys.data.PeterPaul1 <- mutate(NTL.phys.data.PeterPaul1, month = month(sampledate)) 
 
-# reorder columns to put month with the rest of the date variables
+# reorder columns to put month with the rest of the date variables using select()
 NTL.phys.data.PeterPaul1 <- select(NTL.phys.data.PeterPaul1, lakeid:daynum, month, sampledate:comments)
 
 # find out the start and end dates of the dataset
 interval(NTL.phys.data.PeterPaul1$sampledate[1], NTL.phys.data.PeterPaul1$sampledate[21613])
+#use function first, last if the column is not arranged. This is better approach.
 interval(first(NTL.phys.data.PeterPaul1$sampledate), last(NTL.phys.data.PeterPaul1$sampledate))
+
 ```
 
 
@@ -177,11 +195,11 @@ Let's say we want to take our raw dataset (NTL.phys.data), *then* filter the dat
 
 ```{r using pipes}
 NTL.phys.data.processed <- 
-  NTL.phys.data %>%
-  filter(lakename == "Paul Lake" | lakename == "Peter Lake") %>%
-  select(lakename, sampledate:temperature_C) %>%
-  mutate(temperature_F = (temperature_C*9/5) + 32)
-  
+  NTL.phys.data %>% #specify the dataset. In a pipe, this is only done once.
+  filter(lakename == "Paul Lake" | lakename == "Peter Lake") %>% #1st filter command, then
+  select(lakename, sampledate:temperature_C) %>% #second command, then
+  mutate(temperature_F = (temperature_C*9/5) + 32) # third command
+#when writing a pipe, end each line of code with '%>%' 
 ```
 
 Notice that we did not place the dataset name inside the wrangling function but rather at the beginning.
@@ -189,6 +207,7 @@ Notice that we did not place the dataset name inside the wrangling function but 
 ### Saving processed datasets
 
 ```{r exporting data}
+#When creating a processed dataset, save or write the file to a csv using write.csv()
 write.csv(NTL.phys.data.PeterPaul1, row.names = FALSE, file = "./Data/Processed/NTL-LTER_Lake_ChemistryPhysics_PeterPaul_Processed.csv")
 ```
 
