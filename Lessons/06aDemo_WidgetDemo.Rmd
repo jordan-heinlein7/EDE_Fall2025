@@ -1,0 +1,17 @@
+---
+title: Interactive Rmd
+output: html_document
+runtime: shiny
+---
+  
+```{r, echo = FALSE}
+#first chunk is called a "widget". Interactive interface.
+numericInput("n",
+"How many cars?", 5)
+
+#second chunk is the code looking for interface and runs/generates output."Renderer"
+renderTable({
+head(cars, input$n) # input$ looks for name of widget created in prior code chunk.
+})
+```
+
