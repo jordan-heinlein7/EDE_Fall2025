@@ -5,11 +5,13 @@ output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
   chunk_output_type: console
+toc= true
 ---
+\listoftables
 
 ## Set up the coding environment
 
-```{r setup}
+```{r setup, warning=FALSE, echo=FALSE, include=FALSE}
 #Load packages
 library(tidyverse);library(here);library(lubridate)
 
@@ -43,4 +45,16 @@ nutrient_data_tn <- nutrient_data %>%
   )
 ```
 
+\newpage
+
 ## Report the summary
+To make a table, use 'knitr:: kable(name of data frame)'. Can add additional
+arguments like 'caption' to add a table caption.
+
+```{r create tables, echo=FALSE}
+knitr:: kable(nutrient_data_tn)
+knitr:: kable(nutrient_data_tn, caption = "Summary of Total Nitrogen"
+```
+
+can run r code within text if code placed between 'r '. Example:
+
